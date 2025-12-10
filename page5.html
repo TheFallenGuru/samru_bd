@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>For You 💝</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Shared theme file -->
+  <link rel="stylesheet" href="style1.css">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #6dd5fa, #8e44ad);
+      font-family: 'Poppins', sans-serif;
+      color: #f7fbff;
+      text-align: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Start overlay for music permission */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 40, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      padding: 0 4vw;
+      box-sizing: border-box;
+    }
+
+    .start-content {
+      text-align: center;
+      color: white;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .start-content h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #9ef5ff;
+      text-shadow: 0 0 10px rgba(158, 245, 255, 0.9);
+    }
+
+    .start-content p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      opacity: 0.95;
+    }
+
+    .start-button {
+      background: linear-gradient(45deg, #6e78ff, #a363d9);
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      border-radius: 50px;
+      font-size: 1.3em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(110, 120, 255, 0.4);
+      animation: pulse 2s infinite;
+      font-weight: 600;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .start-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 30px rgba(110, 120, 255, 0.6);
+    }
+
+    /* Music control button */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      font-size: 1.5em;
+      z-index: 100;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a54c5;
+    }
+
+    .music-control:hover {
+      transform: scale(1.1);
+      background: #ffffff;
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Wrapper for everything below hearts */
+    .content-wrapper {
+      width: 100%;
+      max-width: 900px;
+      padding: 100px 16px 60px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 10;
+      margin: 0 auto;
+    }
+
+    /* Timeline */
+    .timeline-section {
+      margin-bottom: 40px;
+    }
+
+    .timeline-title {
+      font-size: 1.4em;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #eaf6ff;
+    }
+
+    .timeline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      padding: 10px 0 0;
+      margin: 0 10px 10px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, #6e78ff, #a363d9);
+      opacity: 0.7;
+    }
+
+    .timeline-item {
+      position: relative;
+      text-align: center;
+      flex: 1;
+    }
+
+    .timeline-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #6e78ff;
+      position: relative;
+      margin: 0 auto;
+      box-shadow: 0 0 8px rgba(110, 120, 255, 0.7);
+    }
+
+    .timeline-year {
+      margin-top: 8px;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+
+    .timeline-caption {
+      margin-top: 4px;
+      font-size: 0.8em;
+      opacity: 0.9;
+    }
+
+    /* Things I love about you */
+    .love-section {
+      margin-bottom: 40px;
+    }
+
+    .love-section h3 {
+      font-size: 1.6em;
+      margin-bottom: 15px;
+      color: #eaf6ff;
+    }
+
+    .love-subtext {
+      font-size: 0.95em;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .love-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .love-card {
+      background: rgba(255, 255, 255, 0.13);
+      border-radius: 18px;
+      padding: 18px 16px;
+      max-width: 260px;
+      min-width: 200px;
+      border: 1px solid rgba(200, 225, 255, 0.5);
+      box-shadow: 0 10px 25px rgba(10, 20, 60, 0.3);
+      text-align: left;
+      backdrop-filter: blur(8px);
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all 0.6s ease;
+    }
+
+    .love-card.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .love-card-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #9ef5ff;
+      font-size: 0.95em;
+    }
+
+    .love-card-text {
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    /* Note box styling */
+    .note-box {
+      background: white;
+      color: #333;
+      padding: 40px 30px;
+      border-radius: 25px;
+      box-shadow: 0px 10px 20px rgba(20, 30, 60, 0.15);
+      max-width: 600px;
+      margin: 0 auto;
+      font-family: 'Poppins', sans-serif;
+      text-align: left;
+      position: relative;
+    }
+
+    .note-box h2 {
+      text-align: center;
+      color: #6e78ff;
+      margin-bottom: 20px;
+      font-size: 2em;
+    }
+
+    .note-box p {
+      font-size: 1.1em;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .note-box strong {
+      color: #6e78ff;
+    }
+
+    .note-box em {
+      color: #a363d9;
+    }
+
+    /* Open When section */
+    .open-when {
+      margin-top: 25px;
+      border-top: 1px dashed #d0ddff;
+      padding-top: 20px;
+    }
+
+    .open-when h3 {
+      font-size: 1.2em;
+      margin-bottom: 12px;
+      color: #6e78ff;
+      text-align: center;
+    }
+
+    .open-when-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .open-item {
+      margin-bottom: 6px;
+    }
+
+    .open-trigger {
+      width: 100%;
+      background: rgba(110, 120, 255, 0.08);
+      border-radius: 999px;
+      border: 1px solid rgba(110, 120, 255, 0.3);
+      padding: 8px 14px;
+      font-size: 0.95em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #4a4f75;
+      font-weight: 500;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .open-trigger span.label {
+      flex: 1;
+      text-align: left;
+    }
+
+    .open-trigger span.arrow {
+      margin-left: 10px;
+      font-size: 1.1em;
+    }
+
+    .open-trigger:hover {
+      background: rgba(110, 120, 255, 0.16);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(40, 60, 140, 0.2);
+    }
+
+    .open-content {
+      display: none;
+      font-size: 0.95em;
+      margin-top: 6px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #f5f7ff;
+      color: #4a4f75;
+    }
+
+    .open-content.open {
+      display: block;
+    }
+
+    /* Final button inside note */
+    .note-box button.final-btn {
+      background: linear-gradient(45deg, #6e78ff, #a363d9);
+      padding: 16px 40px;
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.3em;
+      margin-top: 24px;
+      cursor: pointer;
+      box-shadow: 0px 5px 18px rgba(120, 142, 255, 0.55);
+      transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 700;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .note-box button.final-btn:hover {
+      transform: scale(1.07);
+      background: linear-gradient(45deg, #5a64e0, #8c4ec5);
+      box-shadow: 0px 8px 22px rgba(90, 100, 230, 0.7);
+    }
+
+    /* Hearts animation */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .heart {
+      position: absolute;
+      color: #6e78ff;
+      font-size: 20px;
+      animation: fall 4s linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .start-content {
+        padding: 28px 20px;
+      }
+
+      .start-content h2 {
+        font-size: 1.6em;
+      }
+
+      .start-content p {
+        font-size: 1em;
+      }
+
+      .start-button {
+        padding: 16px 30px;
+        font-size: 1.1em;
+      }
+
+      .note-box {
+        margin-top: 30px;
+        padding: 30px 20px;
+      }
+
+      .love-cards {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Start overlay -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-content">
+      <h2>🎉 Special Birthday Message 🎉</h2>
+      <p>Click To Read!</p>
+      <button class="start-button" onclick="startExperience()">Start the Magic ✨</button>
+    </div>
+  </div>
+
+  <!-- Background music -->
+  <audio id="bg-music" loop>
+    <source src="dream_ivory_-_welcome_and_goodbye_(FeelMP3.com).mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Music control button -->
+  <button class="music-control" id="musicControl" onclick="toggleMusic()">🎵</button>
+
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Hearts container -->
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- Main content -->
+  <div class="content-wrapper">
+    <!-- Timeline -->
+    <section class="timeline-section">
+      <div class="timeline-title">Our little timeline 💫</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">2021</div>
+          <div class="timeline-caption">That strangely perfect first phase.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">2022</div>
+          <div class="timeline-caption">chaos & comfort.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">2023</div>
+          <div class="timeline-caption">Growing closer without even trying.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">2024</div>
+          <div class="timeline-caption">More memories, more inside jokes.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">2025</div>
+          <div class="timeline-caption">You, being celebrated like you should. 💜</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Things I love about you -->
+    <section class="love-section">
+      <h3>Things I love about you 💙</h3>
+      <p class="love-subtext">Just three for now, but you know the list is actually endless.</p>
+      <div class="love-cards" id="loveCards">
+        <div class="love-card">
+          <div class="love-card-title">#1 Your energy</div>
+          <div class="love-card-text">
+          You make people feel special in ways they don’t even realise.
+          There’s something about how you listen with sincerity, without judging, without pretending
+          that makes people feel seen.
+          And I’m lucky I’ve been one of those people.
+          </div>
+        </div>
+        <div class="love-card">
+          <div class="love-card-title">#2 Your honesty</div>
+          <div class="love-card-text">
+            Your enthusiasm is unmatched
+            how you show up, full energy, full heart.
+            You don’t just attend moments, you lift them.
+            Even on days when you’re spaced out or high,
+            you still have this soft warmth that makes everyone lighter.
+          </div>
+        </div>
+        <div class="love-card">
+          <div class="love-card-title">#3 Your heart</div>
+          <div class="love-card-text">
+            The way you care isn’t loud, it’s quiet and intentional.
+            It’s that “tu pohochlas ka?” or “kuthe ahes tu?”
+            It’s the little things you remember,
+            the small gestures you bring along without being asked.
+            That kind of effort isn’t routine
+            it’s thoughtful, rare, and honestly beautiful.
+            And that’s why people like you stay in someone’s story forever.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Note Box -->
+    <div class="note-box">
+      <h2>A Little Something From Me...</h2>
+      <p>
+<strong>Dear Gondu,</strong>
+<br><br>
+
+Happy Birthday to someone I genuinely feel lucky to have in my life. ❤️  
+<br><br>
+
+When I think about us, it’s never the big things first—  
+it’s the times when you listened to me at my lowest without trying to fix anything,  
+just being there.  
+It’s the random rides you took me on,  
+the surprise visits when I needed company,  
+that one bouquet you brought—  
+the first time anyone ever did that for me.  
+And the way you never judged me, even when you genuinely could have.  
+Those moments stayed with me more than you know.
+<br><br>
+
+One thing about you that always amazes me is how you show excitement in the smallest things—  
+a small plan, a good day, a tiny achievement.  
+That enthusiasm doesn’t look loud,  
+it looks real and earned.  
+Even when you’re tired, even when things are heavy for you,  
+you still show up.  
+You still care.  
+And not many people can do that.
+<br><br>
+
+Being around you changed me in ways I didn’t notice at first.  
+You made friendships feel lighter, not complicated.  
+You made expressing emotions feel normal instead of uncomfortable.  
+You made me open up in ways I never used to.  
+There’s something genuinely grounding about being seen without being judged.  
+And that’s something you do effortlessly.
+<br><br>
+
+      I’ve always admired how you carry yourself—  
+      emotionally mature when it matters,  
+      soft when someone needs comfort,  
+      dramatic over tiny things at the funniest time,  
+      and somehow still the same person who snaps her fingers saying, “chal chal ha” like life is simple.
+      <br><br>
+
+      You hold a lot inside, more than you admit.  
+      But despite that, you still try.  
+      You still care.  
+      You still make people feel valued—and most importantly, you make them feel safe.
+      <br><br>
+
+      Today, I just hope you feel loved the same way you make others feel loved—  
+      quietly, gently, genuinely.
+      <br><br>
+
+      <strong>Happy Birthday, Gondu 🎂✨</strong>  
+      Thank you for being here.  
+      In my life.  
+      At the right time.  
+      And in the right way.  
+      <br><br>
+
+      </p>
+
+      <p style="text-align:right">With all my heart,<br> —   Archit 💫</p>
+
+      <!-- Open When section -->
+      <div class="open-when">
+        <h3>Open when… 💌</h3>
+        <div class="open-when-items">
+          <div class="open-item">
+            <button type="button" class="open-trigger" data-target="open-sad">
+              <span class="label">you’re feeling a little sad 🥺</span>
+              <span class="arrow">▼</span>
+            </button>
+            <div id="open-sad" class="open-content">
+              You’re allowed to feel everything — even the heavy days. Just remember: you’re not alone, you are loved more than you realise, and I genuinely believe you’ll be okay… even if today doesn’t feel like it yet.
+            </div>
+          </div>
+          <div class="open-item">
+            <button type="button" class="open-trigger" data-target="open-overthinking">
+              <span class="label">you’re overthinking everything 🤯</span>
+              <span class="arrow">▼</span>
+            </button>
+            <div id="open-overthinking" class="open-content">
+              Breathe. Not every thought is a fact, not every fear is a prediction. You’ve handled so much already — trust the version of you that survived all your old worries. I trust your heart and your mind, even when you don’t.
+            </div>
+          </div>
+          <div class="open-item">
+            <button type="button" class="open-trigger" data-target="open-miss">
+              <span class="label">you kind of miss me 🧸</span>
+              <span class="arrow">▼</span>
+            </button>
+            <div id="open-miss" class="open-content">
+              If you’re reading this, just know I’m probably thinking about you too. Distance, time, chaos — none of it changes the fact that you matter to me a lot. One text, one call, one “hi” is always welcome, okay?
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final Button -->
+      <button class="final-btn" onclick="window.location.href='page6.html'">Final One 💖</button>
+    </div>
+  </div>
+
+  <script>
+    let musicPlaying = false;
+
+    function startExperience() {
+      // Hide the start overlay
+      document.getElementById('startOverlay').classList.add('hidden');
+      
+      // Start music
+      const music = document.getElementById('bg-music');
+      music.play().then(() => {
+        musicPlaying = true;
+        updateMusicButton();
+      }).catch(e => {
+        console.log('Music autoplay failed:', e);
+      });
+      
+      // Start confetti
+      startConfetti();
+      
+      // Start hearts
+      startHearts();
+
+      // Reveal love cards nicely
+      revealLoveCards();
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById('bg-music');
+      if (musicPlaying) {
+        music.pause();
+        musicPlaying = false;
+      } else {
+        music.play().then(() => {
+          musicPlaying = true;
+        }).catch(e => {
+          console.log('Music play failed:', e);
+        });
+      }
+      updateMusicButton();
+    }
+
+    function updateMusicButton() {
+      const button = document.getElementById('musicControl');
+      button.textContent = musicPlaying ? '🎵' : '🔇';
+    }
+
+    function startConfetti() {
+      // Simple confetti effect
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const confettiPieces = [];
+      const colors = ['#6e78ff', '#a363d9', '#9ef5ff', '#ffffff', '#8e44ad'];
+      
+      for (let i = 0; i < 50; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 10 + 5,
+          speed: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360
+        });
+      }
+      
+      function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        confettiPieces.forEach(piece => {
+          ctx.save();
+          ctx.translate(piece.x, piece.y);
+          ctx.rotate(piece.rotation * Math.PI / 180);
+          ctx.fillStyle = piece.color;
+          ctx.fillRect(-piece.size/2, -piece.size/2, piece.size, piece.size);
+          ctx.restore();
+          
+          piece.y += piece.speed;
+          piece.rotation += 2;
+          
+          if (piece.y > canvas.height) {
+            piece.y = -piece.size;
+            piece.x = Math.random() * canvas.width;
+          }
+        });
+        
+        requestAnimationFrame(animateConfetti);
+      }
+      
+      animateConfetti();
+    }
+
+    function startHearts() {
+      const heartsContainer = document.getElementById('heartsContainer');
+      
+      function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerHTML = '💜';
+        heart.style.left = Math.random() * window.innerWidth + 'px';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        
+        heartsContainer.appendChild(heart);
+        
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+      
+      // Create hearts every 500ms
+      setInterval(createHeart, 500);
+    }
+
+    // Reveal love cards one by one
+    function revealLoveCards() {
+      const cards = document.querySelectorAll('.love-card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.classList.add('visible');
+        }, 200 * (index + 1));
+      });
+    }
+
+    // Open when toggles
+    document.addEventListener('DOMContentLoaded', () => {
+      const triggers = document.querySelectorAll('.open-trigger');
+      triggers.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-target');
+          const content = document.getElementById(targetId);
+
+          const isOpen = content.classList.contains('open');
+
+          // close all
+          document.querySelectorAll('.open-content').forEach(c => c.classList.remove('open'));
+          document.querySelectorAll('.open-trigger .arrow').forEach(a => a.textContent = '▼');
+
+          // toggle selected
+          if (!isOpen) {
+            content.classList.add('open');
+            btn.querySelector('.arrow').textContent = '▲';
+          }
+        });
+      });
+    });
+
+    // Handle window resize for confetti
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>

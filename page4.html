@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gallery ✨</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --page-max-width: 1100px;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #6dd5fa, #8e44ad);
+      font-family: 'Poppins', sans-serif;
+      color: #f7fbff;
+      text-align: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Start overlay */
+    .start-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 15, 40, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      padding: 0 4vw;
+      box-sizing: border-box;
+    }
+
+    .start-content {
+      text-align: center;
+      color: white;
+      padding: clamp(20px, 4vw, 40px);
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .start-content h2 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      margin-bottom: clamp(14px, 2.3vw, 20px);
+      color: #9ef5ff;
+      text-shadow: 0 0 10px rgba(158, 245, 255, 0.9);
+    }
+
+    .start-content p {
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      margin-bottom: clamp(18px, 3vw, 30px);
+      opacity: 0.95;
+    }
+
+    .start-button {
+      background: linear-gradient(45deg, #6e78ff, #a363d9);
+      color: white;
+      border: none;
+      padding: clamp(12px, 2.2vw, 20px) clamp(26px, 4vw, 40px);
+      border-radius: 50px;
+      font-size: clamp(1rem, 2.6vw, 1.3rem);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(110, 120, 255, 0.4);
+      animation: pulse 2s infinite;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform-: scale(1); }
+    }
+
+    .start-button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 15px 30px rgba(110, 120, 255, 0.6);
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Gallery wrapper to keep nice width on big screens */
+    .page-wrapper {
+      width: 100%;
+      max-width: var(--page-max-width);
+      margin: 0 auto;
+      padding: clamp(20px, 4vw, 40px) clamp(10px, 3vw, 20px) clamp(20px, 5vw, 60px);
+      box-sizing: border-box;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Gallery styling */
+    .polaroid-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 22vw, 220px), 1fr));
+      gap: clamp(16px, 2.5vw, 30px);
+      justify-items: center;
+      width: 100%;
+    }
+
+    .polaroid {
+      background-color: white;
+      padding: clamp(8px, 1.4vw, 10px);
+      border: 2px solid #bcd7ff;
+      border-radius: 10px;
+      box-shadow: 3px 3px 8px rgba(50, 90, 140, 0.25);
+      text-align: center;
+      width: 100%;
+      max-width: 230px; /* prevents giant cards on ultra-wide screens */
+      font-family: 'Comic Sans MS', cursive;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .polaroid:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 5px 5px 14px rgba(40, 70, 120, 0.35);
+    }
+
+    .polaroid-img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #c9e4ff;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .caption {
+      font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+      color: #444b71;
+      margin-top: 5px;
+    }
+
+    /* Videos: span full row for proportion and scale */
+    .video-polaroid {
+      max-width: min(600px, 90vw);
+      width: 100%;
+      margin-top: clamp(10px, 1.6vw, 20px);
+      grid-column: 1 / -1; /* take full row */
+    }
+
+    .polaroid-video {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Centered container for final button */
+    .centered {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-top: clamp(24px, 4vw, 40px);
+      box-sizing: border-box;
+      max-width: 500px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Main CTA button styling (bottom) */
+    .main-button {
+      background: linear-gradient(45deg, #6e78ff, #a363d9);
+      padding: clamp(12px, 2.2vw, 18px) clamp(32px, 4.5vw, 46px);
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+      margin-top: clamp(12px, 2.2vw, 20px);
+      cursor: pointer;
+      box-shadow: 0px 5px 18px rgba(120, 142, 255, 0.55);
+      transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .main-button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #5a64e0, #8c4ec5);
+      box-shadow: 0px 8px 22px rgba(90, 100, 230, 0.7);
+    }
+
+    /* Hearts animation */
+    .hearts-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .heart {
+      position: absolute;
+      color: #6e78ff;
+      font-size: clamp(14px, 2vw, 22px);
+      animation: fall 4s linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Tiny tweak for very small phones */
+    @media (max-width: 400px) {
+      .start-button {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Start overlay -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-content">
+      <h2>✨ Memory Gallery ✨</h2>
+      <p>Click below to view our memories!</p>
+      <button class="start-button" onclick="startExperience()">Start the Gallery 💫</button>
+    </div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Hearts container -->
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <div class="page-wrapper">
+    <!-- Polaroid Grid -->
+    <div class="polaroid-gallery">
+      <!-- Row 1 (Photos) -->
+      <div class="polaroid">
+        <img src="5.jpg" class="polaroid-img" alt="Memory 1" />
+        <p class="caption">Smiles that glow ☀️</p>
+      </div>
+      <div class="polaroid">
+        <img src="6.jpg" class="polaroid-img" alt="Memory 2" />
+        <p class="caption">Hugs and giggles 🤗</p>
+      </div>
+      <div class="polaroid">
+        <img src="7.jpg" class="polaroid-img" alt="Memory 3" />
+        <p class="caption">Goofy face squad 😝</p>
+      </div>
+
+      <!-- Row 2 (Photos) -->
+      <div class="polaroid">
+        <img src="8.jpg" class="polaroid-img" alt="Memory 4" />
+        <p class="caption">Peaceful vibes 🕊️</p>
+      </div>
+      <div class="polaroid">
+        <img src="9.jpg" class="polaroid-img" alt="Memory 5" />
+        <p class="caption">Sunset moments 🌇</p>
+      </div>
+      <div class="polaroid">
+        <img src="10.jpg" class="polaroid-img" alt="Memory 6" />
+        <p class="caption">BFF energy 💕</p>
+      </div>
+
+      <!-- Row 3 (Photos) -->
+      <div class="polaroid">
+        <img src="11.jpg" class="polaroid-img" alt="Memory 7" />
+        <p class="caption">Candid magic 🎞️</p>
+      </div>
+      <div class="polaroid">
+        <img src="12.jpg" class="polaroid-img" alt="Memory 8" />
+        <p class="caption">Wanderlust walks 🚶‍♀️</p>
+      </div>
+      <div class="polaroid">
+        <img src="13.jpg" class="polaroid-img" alt="Memory 9" />
+        <p class="caption">Insta-perfect 💫</p>
+      </div>
+
+      <!-- Videos (each full row) -->
+      <div class="polaroid video-polaroid">
+        <video controls class="polaroid-video">
+          <source src="v3.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <p class="caption">Us being dramatic 😆</p>
+      </div>
+      <div class="polaroid video-polaroid">
+        <video controls class="polaroid-video">
+          <source src="v4.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <p class="caption">Best reaction ever 😮</p>
+      </div>
+      <div class="polaroid video-polaroid">
+        <video controls class="polaroid-video">
+          <source src="v5.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <p class="caption">That goofy dance 🕺</p>
+      </div>
+    </div>
+
+    <!-- Final Button -->
+    <div class="centered">
+      <button class="main-button" onclick="window.location.href='page5.html'">Final Note 💌</button>
+    </div>
+  </div>
+
+  <script>
+    function startExperience() {
+      // Hide the start overlay
+      document.getElementById('startOverlay').classList.add('hidden');
+      
+      // Start confetti
+      startConfetti();
+      
+      // Start hearts
+      startHearts();
+    }
+
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      
+      const confettiPieces = [];
+      const colors = ['#6e78ff', '#a363d9', '#9ef5ff', '#ffffff', '#8e44ad'];
+      
+      for (let i = 0; i < 50; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 10 + 5,
+          speed: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360
+        });
+      }
+      
+      function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        confettiPieces.forEach(piece => {
+          ctx.save();
+          ctx.translate(piece.x, piece.y);
+          ctx.rotate(piece.rotation * Math.PI / 180);
+          ctx.fillStyle = piece.color;
+          ctx.fillRect(-piece.size/2, -piece.size/2, piece.size, piece.size);
+          ctx.restore();
+          
+          piece.y += piece.speed;
+          piece.rotation += 2;
+          
+          if (piece.y > canvas.height) {
+            piece.y = -piece.size;
+            piece.x = Math.random() * canvas.width;
+          }
+        });
+        
+        requestAnimationFrame(animateConfetti);
+      }
+      
+      animateConfetti();
+    }
+
+    function startHearts() {
+      const heartsContainer = document.getElementById('heartsContainer');
+      
+      function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerHTML = '💜';
+        heart.style.left = Math.random() * window.innerWidth + 'px';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        
+        heartsContainer.appendChild(heart);
+        
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+      
+      // Create hearts every 800ms
+      setInterval(createHeart, 800);
+    }
+  </script>
+</body>
+</html>

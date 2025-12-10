@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Almost There 💫</title>
+  <link rel="stylesheet" href="style1.css" />
+  <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+  <script src="heartRain.js" defer></script>
+  <script src="confetti.js" defer></script>
+</head>
+<body onload="startConfetti(); startHearts();">
+  <!-- Background Music -->
+  <audio autoplay loop hidden id="bg-music">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Polaroid Section (stacked vertically) -->
+  <div class="polaroid-gallery" style="display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 30px 20px;">
+    <div class="polaroid">
+      <img src="14.jpg" alt="Final Memory 1" class="polaroid-img" />
+      <p class="caption">Forever  📸</p>
+
+    </div>
+    <div class="polaroid">
+      <img src="15.jpg" alt="Final Memory 2" class="polaroid-img" />
+      <p class="caption">Always  💖</p>
+         <p class="caption">Scroll down</p>
+
+    </div>
+  </div>
+
+  <!-- Button to Thank You Page -->
+  <div class="centered">
+    <a href="https://www.instagram.com/reel/DQuadDjkxQ9/?igsh=MXdlc2h6YWgybzl3NQ==" class="button-link">💗SuRPrize💗</a>
+  </div>
+</body>
+</html>
